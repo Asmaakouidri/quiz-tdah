@@ -435,7 +435,7 @@
       <div class="cta-title" id="cta-title"></div>
       <p class="cta-body" id="cta-body"></p>
       <div class="cta-price">L'Escale · 47€ · paiement unique · accès à vie</div><br>
-      <a class="btn-primary" href="https://asmaakouidri.fr/escale" target="_blank">
+      <a class="btn-primary" href="https://www.asmaakouidri.fr/escale" target="_blank">
         Découvrir L'Escale
         <span class="btn-arrow">→</span>
       </a>
@@ -542,8 +542,9 @@ function showResult() {
         { title: 'La piste à explorer', body: 'Le TDAH inattentif (sans hyperactivité visible) est le plus souvent non détecté chez la femme adulte. C\'est peut-être ce chemin à regarder.' }
       ],
       medical: '« Docteur, j\'ai répondu à un quiz sur le TDAH féminin et certaines situations me correspondent — notamment la fatigue cognitive, les difficultés de concentration et les émotions intenses. J\'aimerais qu\'on explore ensemble si une évaluation serait pertinente. »',
-      ctaTitle: 'Commence à explorer ton cerveau',
-      ctaBody: 'L\'Escale est une formation de 7 jours pour comprendre ton fonctionnement — identifier tes patterns, ton énergie, ton rythme naturel. Même sans diagnostic.'
+      ctaTitle: 'Continue d\'explorer à ton rythme',
+      ctaBody: 'Le simple fait de t\'être posé ces questions mérite attention. Garde un œil sur ce qui résonne pour toi dans les prochains jours — ton cerveau te parle souvent plus qu\'on ne le croit.',
+      ctaIsLow: true
     };
   } else if (pct <= 66) {
     profile = {
@@ -558,7 +559,8 @@ function showResult() {
       ],
       medical: '« Docteur, je pense que je pourrais avoir un TDAH de type inattentif. J\'ai des difficultés persistantes de concentration, une fatigue cognitive importante, des émotions intenses et du mal à m\'organiser malgré mes efforts. J\'aimerais une orientation vers un psychiatre ou neuropsychologue pour une évaluation. »',
       ctaTitle: 'Tu mérites de te comprendre enfin',
-      ctaBody: 'L\'Escale t\'accompagne 7 jours pour décoder ton fonctionnement — avant même le diagnostic. Parce que te comprendre ne devrait pas attendre.'
+      ctaBody: 'L\'Escale t\'accompagne 7 jours pour décoder ton fonctionnement — avant même le diagnostic. Parce que te comprendre ne devrait pas attendre.',
+      ctaIsLow: false
     };
   } else {
     profile = {
@@ -573,7 +575,8 @@ function showResult() {
       ],
       medical: '« Docteur, je crois avoir un TDAH non diagnostiqué — de type mixte ou inattentif. J\'ai des difficultés sévères de concentration, une fatigue cognitive chronique, une dysrégulation émotionnelle intense et une perception du temps très altérée depuis l\'enfance. Je souhaite une orientation vers un psychiatre ou neuropsychologue spécialisé pour une évaluation complète. »',
       ctaTitle: 'Commence ta transformation dès aujourd\'hui',
-      ctaBody: '7 jours pour comprendre ton cerveau, identifier tes patterns et commencer à t\'aligner avec qui tu es vraiment. Sans attendre un diagnostic qui peut prendre des mois.'
+      ctaBody: '7 jours pour comprendre ton cerveau, identifier tes patterns et commencer à t\'aligner avec qui tu es vraiment. Sans attendre un diagnostic qui peut prendre des mois.',
+      ctaIsLow: false
     };
   }
 
@@ -598,6 +601,19 @@ function showResult() {
   document.getElementById('medical-text').textContent = profile.medical;
   document.getElementById('cta-title').textContent = profile.ctaTitle;
   document.getElementById('cta-body').textContent = profile.ctaBody;
+
+  const ctaBlock = document.getElementById('cta-block');
+  if (profile.ctaIsLow) {
+    ctaBlock.innerHTML = `
+      <div class="cta-label">Pour la suite</div>
+      <div class="cta-title">${profile.ctaTitle}</div>
+      <p class="cta-body">${profile.ctaBody}</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.7;margin-top:8px">Tu recevras par email des ressources pour explorer le sujet à ton rythme — sans pression.</p>
+    `;
+  } else {
+    ctaBlock.querySelector('.cta-title').textContent = profile.ctaTitle;
+    ctaBlock.querySelector('.cta-body').textContent = profile.ctaBody;
+  }
 
   show('screen-result');
 }
