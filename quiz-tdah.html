@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz TDAH Féminin — Alchimie du Soi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A96E;
+    --gold-light: #E8D5B0;
+    --gold-pale: #F8F2E8;
+    --dark: #1A1714;
+    --dark-mid: #2D2926;
+    --mid: #5C5550;
+    --light: #F5EFE6;
+    --white: #FDFAF6;
+    --purple: #7B6FA0;
+    --purple-light: #EAE6F4;
+    --teal: #4A8B7F;
+    --teal-light: #E0F0EC;
+    --amber: #C97C2E;
+    --amber-light: #FDF0E0;
+    --radius: 16px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .bg-texture {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(201,169,110,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(123,111,160,0.06) 0%, transparent 60%);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 680px; margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 48px;
+  }
+  .brand-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold);
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px; letter-spacing: 0.12em;
+    color: var(--gold); text-transform: uppercase;
+  }
+
+  .screen { display: none; animation: fadeUp 0.4s ease both; }
+  .screen.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* INTRO */
+  .intro-eyebrow {
+    font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .intro-eyebrow::before {
+    content: ''; display: block;
+    width: 24px; height: 1px; background: var(--gold);
+  }
+  .intro-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 6vw, 48px);
+    font-weight: 500; line-height: 1.15;
+    color: var(--white); margin-bottom: 20px;
+  }
+  .intro-title em {
+    font-style: italic; color: var(--gold-light);
+  }
+  .intro-body {
+    font-size: 16px; color: rgba(255,255,255,0.65);
+    line-height: 1.75; margin-bottom: 32px;
+    max-width: 520px;
+  }
+  .intro-pills {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .pill {
+    font-size: 12px; padding: 6px 14px; border-radius: 20px;
+    border: 1px solid rgba(201,169,110,0.3);
+    color: var(--gold-light); background: rgba(201,169,110,0.06);
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px;
+    background: var(--gold); color: var(--dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    border: none; border-radius: var(--radius-sm);
+    cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-arrow { font-size: 18px; transition: transform 0.2s; }
+  .btn-primary:hover .btn-arrow { transform: translateX(4px); }
+
+  .intro-note {
+    margin-top: 20px; font-size: 13px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* PROGRESS */
+  .progress-wrap { margin-bottom: 36px; }
+  .progress-top {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: rgba(255,255,255,0.4);
+    margin-bottom: 8px;
+  }
+  .progress-track {
+    height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px;
+  }
+  .progress-fill {
+    height: 100%; background: var(--gold); border-radius: 1px;
+    transition: width 0.4s ease;
+  }
+
+  /* QUESTION */
+  .q-cat {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .q-cat::before {
+    content: ''; display: block;
+    width: 16px; height: 1px; background: var(--gold);
+  }
+  .q-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 4vw, 26px);
+    font-weight: 500; line-height: 1.35;
+    color: var(--white); margin-bottom: 32px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+  .opt {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.18s;
+  }
+  .opt:hover {
+    background: rgba(201,169,110,0.08);
+    border-color: rgba(201,169,110,0.35);
+  }
+  .opt.selected {
+    background: rgba(201,169,110,0.12);
+    border-color: var(--gold);
+  }
+  .opt-radio {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    flex-shrink: 0; transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .opt.selected .opt-radio {
+    border-color: var(--gold); background: var(--gold);
+  }
+  .opt.selected .opt-radio::after {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--dark);
+  }
+  .opt-label { font-size: 14px; color: rgba(255,255,255,0.8); }
+  .opt.selected .opt-label { color: var(--white); }
+
+  .btn-next {
+    padding: 14px 28px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    cursor: not-allowed; transition: all 0.2s;
+  }
+  .btn-next.ready {
+    border-color: var(--gold); color: var(--gold); cursor: pointer;
+  }
+  .btn-next.ready:hover {
+    background: rgba(201,169,110,0.1);
+  }
+
+  /* EMAIL */
+  .email-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 500; line-height: 1.2;
+    color: var(--white); margin-bottom: 12px;
+  }
+  .email-sub {
+    font-size: 15px; color: rgba(255,255,255,0.6);
+    line-height: 1.7; margin-bottom: 28px; max-width: 480px;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .inp {
+    flex: 1; min-width: 180px;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--white);
+    transition: border-color 0.2s;
+  }
+  .inp::placeholder { color: rgba(255,255,255,0.3); }
+  .inp:focus { outline: none; border-color: var(--gold); }
+  .email-legal {
+    font-size: 12px; color: rgba(255,255,255,0.3);
+    line-height: 1.6; margin-top: 12px;
+  }
+
+  /* RESULT */
+  .result-header { margin-bottom: 32px; }
+  .result-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+  }
+  .result-badge.low { background: var(--teal-light); color: #2D6B60; }
+  .result-badge.mid { background: var(--amber-light); color: #8B4F10; }
+  .result-badge.high { background: var(--purple-light); color: #4A3D78; }
+  .result-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 500; line-height: 1.2;
+    color: var(--white); margin-bottom: 14px;
+  }
+  .result-sub {
+    font-size: 15px; color: rgba(255,255,255,0.65);
+    line-height: 1.75; margin-bottom: 28px; max-width: 560px;
+  }
+
+  .score-block { margin-bottom: 32px; }
+  .score-top {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: rgba(255,255,255,0.45);
+    margin-bottom: 8px;
+  }
+  .score-val { font-size: 22px; font-weight: 500; color: var(--white); }
+  .score-track {
+    height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+  }
+  .score-fill {
+    height: 100%; border-radius: 2px; transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .insights { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .insight {
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+  }
+  .insight-title {
+    font-size: 13px; font-weight: 500; color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+  .insight-body {
+    font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7;
+  }
+
+  .medical-block {
+    padding: 20px; margin-bottom: 24px;
+    background: rgba(201,169,110,0.06);
+    border: 1px solid rgba(201,169,110,0.25);
+    border-radius: var(--radius-sm);
+  }
+  .medical-label {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .medical-label::before {
+    content: ''; width: 16px; height: 1px; background: var(--gold);
+  }
+  .medical-text {
+    font-size: 14px; color: rgba(255,255,255,0.7);
+    line-height: 1.8; font-style: italic;
+  }
+
+  .cta-block {
+    padding: 28px; margin-bottom: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+  }
+  .cta-label {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.4); margin-bottom: 10px;
+  }
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 500;
+    color: var(--white); margin-bottom: 10px;
+  }
+  .cta-body {
+    font-size: 14px; color: rgba(255,255,255,0.6);
+    line-height: 1.75; margin-bottom: 20px;
+  }
+  .cta-price {
+    display: inline-block; font-size: 13px;
+    color: var(--gold); margin-bottom: 20px;
+    padding: 5px 12px; border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 4px;
+  }
+
+  .disclaimer {
+    font-size: 11px; color: rgba(255,255,255,0.25);
+    line-height: 1.7; text-align: center;
+    padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 28px 16px 60px; }
+    .input-row { flex-direction: column; }
+    .inp { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-texture"></div>
+<div class="container">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div class="brand-name">Alchimie du Soi</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-eyebrow">Quiz TDAH féminin</div>
+    <h1 class="intro-title">Et si ton cerveau<br>fonctionnait simplement<br><em>autrement ?</em></h1>
+    <p class="intro-body">Tu as entendu parler du TDAH. Quelque chose résonne — mais tu n'es pas certaine. Ce quiz n'est pas un diagnostic. C'est un miroir pour mettre des mots sur ce que tu vis depuis longtemps.</p>
+    <div class="intro-pills">
+      <span class="pill">15 questions</span>
+      <span class="pill">5 minutes</span>
+      <span class="pill">Résultats personnalisés</span>
+      <span class="pill">Mots pour ton médecin</span>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">
+      Commencer le quiz
+      <span class="btn-arrow">→</span>
+    </button>
+    <p class="intro-note">Pas de bonnes ou mauvaises réponses · Réponds selon ton vécu réel</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="q-counter">Question 1 / 15</span>
+        <span id="q-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="q-cat" id="q-cat"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Continuer</button>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="screen" id="screen-email">
+    <div class="intro-eyebrow">Quiz terminé</div>
+    <h2 class="email-title">Tes résultats sont prêts.</h2>
+    <p class="email-sub">Entre ton prénom et ton email pour recevoir ton profil détaillé — avec les mots exacts pour en parler à ton médecin si tu le souhaites.</p>
+    <div class="input-group">
+      <div class="input-row">
+        <input class="inp" type="text" id="inp-prenom" placeholder="Ton prénom">
+        <input class="inp" type="email" id="inp-email" placeholder="ton@email.com">
+      </div>
+      <button class="btn-primary" onclick="showResult()" style="align-self:flex-start">
+        Voir mes résultats
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+    <p class="email-legal">En continuant, tu acceptes de recevoir tes résultats et des ressources sur le TDAH féminin par email. Désabonnement en 1 clic, à tout moment.</p>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="result-header">
+      <div class="result-badge" id="res-badge"></div>
+      <h2 class="result-title" id="res-title"></h2>
+      <p class="result-sub" id="res-sub"></p>
+    </div>
+
+    <div class="score-block">
+      <div class="score-top">
+        <span>Ton score</span>
+        <span class="score-val" id="res-score-val"></span>
+      </div>
+      <div class="score-track">
+        <div class="score-fill" id="res-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="insights" id="insight-list"></div>
+
+    <div class="medical-block">
+      <div class="medical-label">Ce que tu peux dire à ton médecin</div>
+      <p class="medical-text" id="medical-text"></p>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-label">La prochaine étape</div>
+      <div class="cta-title" id="cta-title"></div>
+      <p class="cta-body" id="cta-body"></p>
+      <div class="cta-price">L'Escale · 47€ · paiement unique · accès à vie</div><br>
+      <a class="btn-primary" href="https://asmaakouidri.fr/escale" target="_blank">
+        Découvrir L'Escale
+        <span class="btn-arrow">→</span>
+      </a>
+    </div>
+
+    <p class="disclaimer">Ce quiz n'est pas un outil de diagnostic médical. Il est conçu pour t'aider à mettre des mots sur ton vécu et à initier une conversation avec un professionnel de santé. Seul un psychiatre ou neuropsychologue peut poser un diagnostic TDAH officiel.</p>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {cat:"Attention", text:"Tu lis une page entière et tu réalises que tu n'as rien retenu, même en pensant lire attentivement.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Attention", text:"Tu perds le fil d'une conversation — parfois au milieu d'une phrase que tu dis toi-même.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Organisation", text:"Tu commences plusieurs tâches en même temps et tu en finis rarement une avant d'en démarrer une nouvelle.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Organisation", text:"Tu arrives en retard ou oublies des rendez-vous importants — malgré des alarmes et des rappels.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Émotions", text:"Une critique, même légère, peut te faire sentir effondrée ou profondément blessée pendant des heures.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Émotions", text:"Tu passes de la joie à la tristesse ou l'irritabilité très vite, sans raison apparente pour les autres.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Énergie", text:"Tu te sens épuisée même après une bonne nuit de sommeil — une fatigue qui ne passe pas.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Énergie", text:"Tu es créative et débordante d'idées à certains moments, puis complètement à plat les jours suivants.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Masquage", text:"Tu fais des efforts immenses pour paraître organisée et normale — alors que c'est le chaos à l'intérieur.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Masquage", text:"Tu as longtemps cru que tu étais \"flemme\" ou \"trop sensible\" — jusqu'à entendre parler du TDAH.", opts:["Ça ne me correspond pas","Un peu","Beaucoup","C'est exactement moi"], scores:[0,1,2,3]},
+  {cat:"Hyperfocus", text:"Il t'arrive de passer 4 à 6 heures sur un sujet qui te passionne — sans voir le temps passer, sans manger.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Hyperfocus", text:"Par contre, pour les tâches banales (formulaire, email admin), tu peux repousser pendant des semaines.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Mémoire & temps", text:"Tu oublies ce que tu venais chercher en entrant dans une pièce. Souvent.", opts:["Jamais ou presque","Parfois","Souvent","Presque tout le temps"], scores:[0,1,2,3]},
+  {cat:"Mémoire & temps", text:"Pour toi, le temps fonctionne en deux modes : maintenant ou pas maintenant. Les délais te semblent flous jusqu'au dernier moment.", opts:["Ça ne me correspond pas","Un peu","Beaucoup","C'est exactement moi"], scores:[0,1,2,3]},
+  {cat:"Vécu global", text:"En lisant ces questions, tu te reconnais dans des situations que tu pensais n'être qu'un défaut de caractère.", opts:["Pas vraiment","Un peu","Beaucoup","Complètement — c'est ma vie"], scores:[0,1,2,3]}
+];
+
+let cur = 0, answers = [];
+
+function startQuiz() {
+  show('screen-quiz');
+  renderQ();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  el.style.display = 'block';
+  requestAnimationFrame(() => el.classList.add('active'));
+}
+
+function renderQ() {
+  const q = questions[cur];
+  const pct = Math.round((cur / questions.length) * 100);
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('q-counter').textContent = 'Question ' + (cur + 1) + ' / ' + questions.length;
+  document.getElementById('q-pct').textContent = pct + '%';
+  document.getElementById('q-cat').textContent = q.cat;
+  document.getElementById('q-text').textContent = q.text;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const d = document.createElement('div');
+    d.className = 'opt';
+    d.innerHTML = '<div class="opt-radio"></div><div class="opt-label">' + o + '</div>';
+    d.onclick = () => {
+      document.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
+      d.classList.add('selected');
+      answers[cur] = q.scores[i];
+      document.getElementById('btn-next').classList.add('ready');
+    };
+    opts.appendChild(d);
+  });
+  document.getElementById('btn-next').classList.remove('ready');
+}
+
+function nextQ() {
+  if (answers[cur] === undefined) return;
+  cur++;
+  if (cur >= questions.length) { show('screen-email'); return; }
+  renderQ();
+}
+
+function showResult() {
+  const prenom = document.getElementById('inp-prenom').value.trim() || 'toi';
+  const email = document.getElementById('inp-email').value.trim();
+  const total = answers.reduce((a, b) => a + (b || 0), 0);
+  const max = questions.length * 3;
+  const pct = Math.round((total / max) * 100);
+
+  // Send to SIO webhook (replace URL with your SIO webhook)
+  if (email) {
+    fetch('WEBHOOK_SIO_URL', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, prenom: prenom, score: pct, profil: pct <= 33 ? 'doute' : pct <= 66 ? 'resonne' : 'certaine' })
+    }).catch(() => {});
+  }
+
+  let profile;
+  if (pct <= 33) {
+    profile = {
+      badgeClass: 'low', badge: 'Le doute s\'installe',
+      title: 'Quelque chose mérite attention, ' + prenom + '.',
+      sub: 'Ton score ne crie pas TDAH — mais certains de tes vécus méritent d\'être explorés. Les femmes présentent souvent des formes discrètes et masquées. Ne referme pas cette porte trop vite.',
+      barColor: '#4A8B7F',
+      insights: [
+        { title: 'Ce qui ressort', body: 'Quelques situations d\'inattention et de fatigue apparaissent. Elles peuvent venir d\'autres origines — anxiété, surcharge — mais méritent qu\'on y regarde de plus près.' },
+        { title: 'Ce que ça ne veut pas dire', body: 'Un score modéré ne signifie pas que tu n\'es pas concernée. Les femmes TDAH masquent si bien qu\'elles se sous-estiment elles-mêmes.' },
+        { title: 'La piste à explorer', body: 'Le TDAH inattentif (sans hyperactivité visible) est le plus souvent non détecté chez la femme adulte. C\'est peut-être ce chemin à regarder.' }
+      ],
+      medical: '« Docteur, j\'ai répondu à un quiz sur le TDAH féminin et certaines situations me correspondent — notamment la fatigue cognitive, les difficultés de concentration et les émotions intenses. J\'aimerais qu\'on explore ensemble si une évaluation serait pertinente. »',
+      ctaTitle: 'Commence à explorer ton cerveau',
+      ctaBody: 'L\'Escale est une formation de 7 jours pour comprendre ton fonctionnement — identifier tes patterns, ton énergie, ton rythme naturel. Même sans diagnostic.'
+    };
+  } else if (pct <= 66) {
+    profile = {
+      badgeClass: 'mid', badge: 'Quelque chose résonne fort',
+      title: prenom + ', trop de coïncidences pour en être une.',
+      sub: 'Tes réponses dessinent un tableau cohérent. Ce n\'est pas de l\'imagination. Beaucoup de femmes diagnostiquées TDAH ont vécu exactement ce que tu décris — pendant des années, sans pouvoir mettre des mots dessus.',
+      barColor: '#C97C2E',
+      insights: [
+        { title: 'Les signes significatifs dans tes réponses', body: 'Difficultés d\'attention soutenue, dysrégulation émotionnelle, fatigue inexpliquée, masquage social. Ces éléments forment un tableau qui mérite une évaluation professionnelle.' },
+        { title: 'Ce que tu as probablement vécu', body: 'Des années à te croire « trop » quelque chose — trop sensible, trop désorganisée. Et une incompréhension profonde de toi-même. Ce n\'est pas un défaut de caractère.' },
+        { title: 'La prochaine étape concrète', body: 'Parler à ton médecin traitant est la première porte. Tu n\'as pas besoin d\'être certaine — tu as besoin d\'être entendue et orientée.' }
+      ],
+      medical: '« Docteur, je pense que je pourrais avoir un TDAH de type inattentif. J\'ai des difficultés persistantes de concentration, une fatigue cognitive importante, des émotions intenses et du mal à m\'organiser malgré mes efforts. J\'aimerais une orientation vers un psychiatre ou neuropsychologue pour une évaluation. »',
+      ctaTitle: 'Tu mérites de te comprendre enfin',
+      ctaBody: 'L\'Escale t\'accompagne 7 jours pour décoder ton fonctionnement — avant même le diagnostic. Parce que te comprendre ne devrait pas attendre.'
+    };
+  } else {
+    profile = {
+      badgeClass: 'high', badge: 'Tu te reconnais à chaque ligne',
+      title: prenom + ', il est temps de mettre des mots sur ces maux.',
+      sub: 'Tes réponses sont claires. Tu vis depuis probablement très longtemps avec un cerveau qui fonctionne différemment. Tu as appris à compenser, masquer, t\'adapter — au prix d\'une énergie immense. Tu mérites d\'être évaluée.',
+      barColor: '#7B6FA0',
+      insights: [
+        { title: 'Ce que tes réponses révèlent', body: 'Un profil cohérent avec le TDAH féminin adulte — inattention, hyperfocus, dysrégulation émotionnelle, masquage, fatigue chronique, perception du temps altérée. Ce n\'est pas « dans ta tête ». C\'est neurologique.' },
+        { title: 'Ce que tu as porté seule', body: 'La honte. La conviction d\'être nulle ou trop. Les efforts invisibles pour paraître normale. Tu n\'étais pas trop — tu étais mal décodée.' },
+        { title: 'Ce que cette reconnaissance change', body: 'Savoir que c\'est ton cerveau, pas ton caractère, change tout. Ça te rend la bienveillance envers toi-même que tu mérites depuis longtemps.' }
+      ],
+      medical: '« Docteur, je crois avoir un TDAH non diagnostiqué — de type mixte ou inattentif. J\'ai des difficultés sévères de concentration, une fatigue cognitive chronique, une dysrégulation émotionnelle intense et une perception du temps très altérée depuis l\'enfance. Je souhaite une orientation vers un psychiatre ou neuropsychologue spécialisé pour une évaluation complète. »',
+      ctaTitle: 'Commence ta transformation dès aujourd\'hui',
+      ctaBody: '7 jours pour comprendre ton cerveau, identifier tes patterns et commencer à t\'aligner avec qui tu es vraiment. Sans attendre un diagnostic qui peut prendre des mois.'
+    };
+  }
+
+  document.getElementById('res-badge').className = 'result-badge ' + profile.badgeClass;
+  document.getElementById('res-badge').textContent = profile.badge;
+  document.getElementById('res-title').textContent = profile.title;
+  document.getElementById('res-sub').textContent = profile.sub;
+  document.getElementById('res-score-val').textContent = pct + '%';
+  const bar = document.getElementById('res-bar');
+  bar.style.background = profile.barColor;
+  setTimeout(() => { bar.style.width = pct + '%'; }, 200);
+
+  const il = document.getElementById('insight-list');
+  il.innerHTML = '';
+  profile.insights.forEach(ins => {
+    const d = document.createElement('div');
+    d.className = 'insight';
+    d.innerHTML = '<div class="insight-title">' + ins.title + '</div><div class="insight-body">' + ins.body + '</div>';
+    il.appendChild(d);
+  });
+
+  document.getElementById('medical-text').textContent = profile.medical;
+  document.getElementById('cta-title').textContent = profile.ctaTitle;
+  document.getElementById('cta-body').textContent = profile.ctaBody;
+
+  show('screen-result');
+}
+
+document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; });
+document.getElementById('screen-intro').style.display = 'block';
+document.getElementById('screen-intro').classList.add('active');
+</script>
+</body>
+</html>
