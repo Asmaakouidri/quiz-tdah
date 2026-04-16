@@ -392,16 +392,20 @@
     <div class="intro-eyebrow">Quiz terminé</div>
     <h2 class="email-title">Tes résultats sont prêts.</h2>
     <p class="email-sub">Entre ton prénom et ton email pour recevoir ton profil détaillé — avec les mots exacts pour en parler à ton médecin si tu le souhaites.</p>
-    <div class="input-group">
-      <div class="input-row">
-        <input class="inp" type="text" id="inp-prenom" placeholder="Ton prénom">
-        <input class="inp" type="email" id="inp-email" placeholder="ton@email.com">
+    <form id="capture-form" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="score" id="hidden-score" value="">
+      <input type="hidden" name="profil" id="hidden-profil" value="">
+      <div class="input-group">
+        <div class="input-row">
+          <input class="inp" type="text" id="inp-prenom" name="first_name" placeholder="Ton prénom" required>
+          <input class="inp" type="email" id="inp-email" name="email" placeholder="ton@email.com" required>
+        </div>
+        <button type="submit" class="btn-primary" style="align-self:flex-start">
+          Voir mes résultats
+          <span class="btn-arrow">→</span>
+        </button>
       </div>
-      <button class="btn-primary" onclick="showResult()" style="align-self:flex-start">
-        Voir mes résultats
-        <span class="btn-arrow">→</span>
-      </button>
-    </div>
+    </form>
     <p class="email-legal">En continuant, tu acceptes de recevoir tes résultats et des ressources sur le TDAH féminin par email. Désabonnement en 1 clic, à tout moment.</p>
   </div>
 
@@ -513,21 +517,34 @@ function nextQ() {
   renderQ();
 }
 
+function handleSubmit(e) {
+  e.preventDefault();
+  showResult();
+}
+
 function showResult() {
   const prenom = document.getElementById('inp-prenom').value.trim() || 'toi';
   const email = document.getElementById('inp-email').value.trim();
   const total = answers.reduce((a, b) => a + (b || 0), 0);
   const max = questions.length * 3;
   const pct = Math.round((total / max) * 100);
+  const profil = pct <= 33 ? 'doute' : pct <= 66 ? 'resonne' : 'certaine';
 
-  // Send to SIO webhook (replace URL with your SIO webhook)
-  if (email) {
-    fetch('https://systeme.io/api/optin/23650899', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, prenom: prenom, score: pct, profil: pct <= 33 ? 'doute' : pct <= 66 ? 'resonne' : 'certaine' })
-    }).catch(() => {});
-  }
+  // Submit to SIO via hidden iframe (bypass CORS)
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://systeme.io/api/optin/23650899';
+  form.target = 'sio-iframe';
+  form.style.display = 'none';
+  const fields = { email: email, first_name: prenom, fields: JSON.stringify({score: pct, profil: profil}) };
+  Object.entries(fields).forEach(([k,v]) => {
+    const i = document.createElement('input');
+    i.type = 'hidden'; i.name = k; i.value = v;
+    form.appendChild(i);
+  });
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => document.body.removeChild(form), 2000);
 
   let profile;
   if (pct <= 33) {
@@ -622,5 +639,6 @@ document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; })
 document.getElementById('screen-intro').style.display = 'block';
 document.getElementById('screen-intro').classList.add('active');
 </script>
+<iframe name="sio-iframe" style="display:none" width="0" height="0"></iframe>
 </body>
 </html>
