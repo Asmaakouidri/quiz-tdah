@@ -519,6 +519,9 @@ function nextQ() {
 
 function handleSubmit(e) {
   e.preventDefault();
+  const prenom = document.getElementById('inp-prenom').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  if (!email) { alert('Merci d\u2019entrer ton email pour voir tes r\u00e9sultats.'); return; }
   showResult();
 }
 
@@ -530,12 +533,14 @@ function showResult() {
   const pct = Math.round((total / max) * 100);
   const profil = pct <= 33 ? 'doute' : pct <= 66 ? 'resonne' : 'certaine';
 
-  // Submit to Make webhook (no CORS issues)
-  fetch('https://hook.eu1.make.com/f71pyt9crpy7a3x29dyxvmnniltv4nab', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, prenom: prenom, score: pct, profil: profil })
-  }).catch(() => {});
+  // Submit to Make webhook (non-blocking)
+  try {
+    fetch('https://hook.eu1.make.com/f71pyt9crpy7a3x29dyxvmnniltv4nab', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, prenom: prenom, score: pct, profil: profil })
+    }).catch(() => {});
+  } catch(e) {}
 
   let profile;
   if (pct <= 33) {
@@ -619,8 +624,10 @@ function showResult() {
       <p style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.7;margin-top:8px">Tu recevras par email des ressources pour explorer le sujet à ton rythme — sans pression.</p>
     `;
   } else {
-    ctaBlock.querySelector('.cta-title').textContent = profile.ctaTitle;
-    ctaBlock.querySelector('.cta-body').textContent = profile.ctaBody;
+    const t = ctaBlock.querySelector('.cta-title');
+    const b = ctaBlock.querySelector('.cta-body');
+    if (t) t.textContent = profile.ctaTitle;
+    if (b) b.textContent = profile.ctaBody;
   }
 
   show('screen-result');
