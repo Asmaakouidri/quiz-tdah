@@ -530,21 +530,12 @@ function showResult() {
   const pct = Math.round((total / max) * 100);
   const profil = pct <= 33 ? 'doute' : pct <= 66 ? 'resonne' : 'certaine';
 
-  // Submit to SIO via hidden iframe (bypass CORS)
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = 'https://systeme.io/api/optin/23650899';
-  form.target = 'sio-iframe';
-  form.style.display = 'none';
-  const fields = { email: email, first_name: prenom, fields: JSON.stringify({score: pct, profil: profil}) };
-  Object.entries(fields).forEach(([k,v]) => {
-    const i = document.createElement('input');
-    i.type = 'hidden'; i.name = k; i.value = v;
-    form.appendChild(i);
-  });
-  document.body.appendChild(form);
-  form.submit();
-  setTimeout(() => document.body.removeChild(form), 2000);
+  // Submit to Make webhook (no CORS issues)
+  fetch('https://hook.eu1.make.com/f71pyt9crpy7a3x29dyxvmnniltv4nab', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, prenom: prenom, score: pct, profil: profil })
+  }).catch(() => {});
 
   let profile;
   if (pct <= 33) {
