@@ -616,18 +616,26 @@ function showResult() {
   document.getElementById('cta-body').textContent = profile.ctaBody;
 
   const ctaBlock = document.getElementById('cta-block');
-  if (profile.ctaIsLow) {
-    ctaBlock.innerHTML = `
-      <div class="cta-label">Pour la suite</div>
-      <div class="cta-title">${profile.ctaTitle}</div>
-      <p class="cta-body">${profile.ctaBody}</p>
-      <p style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.7;margin-top:8px">Tu recevras par email des ressources pour explorer le sujet à ton rythme — sans pression.</p>
-    `;
-  } else {
-    const t = ctaBlock.querySelector('.cta-title');
-    const b = ctaBlock.querySelector('.cta-body');
-    if (t) t.textContent = profile.ctaTitle;
-    if (b) b.textContent = profile.ctaBody;
+  if (ctaBlock) {
+    if (profile.ctaIsLow) {
+      ctaBlock.innerHTML = `
+        <div class="cta-label">Pour la suite</div>
+        <div class="cta-title">${profile.ctaTitle}</div>
+        <p class="cta-body">${profile.ctaBody}</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.7;margin-top:8px">Tu recevras par email des ressources pour explorer le sujet à ton rythme — sans pression.</p>
+      `;
+    } else {
+      ctaBlock.innerHTML = `
+        <div class="cta-label">La prochaine étape</div>
+        <div class="cta-title">${profile.ctaTitle}</div>
+        <p class="cta-body">${profile.ctaBody}</p>
+        <div class="cta-price">L'Escale · 47€ · paiement unique · accès à vie</div><br>
+        <a class="btn-primary" href="https://www.asmaakouidri.fr/escale" target="_blank">
+          Découvrir L'Escale
+          <span class="btn-arrow">→</span>
+        </a>
+      `;
+    }
   }
 
   show('screen-result');
