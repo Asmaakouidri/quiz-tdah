@@ -538,7 +538,7 @@ function showResult() {
     fetch('https://hook.eu1.make.com/f71pyt9crpy7a3x29dyxvmnniltv4nab', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, prenom: prenom, score: pct, profil: profil })
+      body: JSON.stringify({ email: email, firstname: prenom, score: pct, profil: profil })
     }).catch(() => {});
   } catch(e) {}
 
